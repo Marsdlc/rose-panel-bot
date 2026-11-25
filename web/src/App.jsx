@@ -149,7 +149,27 @@ export default function App() {
   const [checkinLoading, setCheckinLoading] = useState(false);
   const [toast, setToast] = useState('');
   const [previewRole, setPreviewRole] = useState(() => getDevRole());
+  const [scrolled, setScrolled] = useState(false);
   const splashMeta = readSplashMeta();
+
+  useEffect(() => {
+    let rafId = 0;
+    const updateScrolled = () => {
+      rafId = 0;
+      const next = window.scrollY > 8;
+      setScrolled((prev) => (prev === next ? prev : next));
+    };
+    const onScroll = () => {
+      if (rafId) return;
+      rafId = window.requestAnimationFrame(updateScrolled);
+    };
+    updateScrolled();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      if (rafId) window.cancelAnimationFrame(rafId);
+    };
+  }, []);
 
   const showToast = useCallback((msg) => {
     setToast(msg);
@@ -276,9 +296,18 @@ export default function App() {
     navItems.push({ id: 'leaderboard', label: '榜单', icon: Trophy });
   }
 
+  const activeNavIndex = Math.max(
+    0,
+    navItems.findIndex((item) => item.id === activeTab)
+  );
+
   return (
     <div className="app-shell">
-      {toast && <div className="toast">{toast}</div>}
+      {toast && (
+        <div className="toast" role="status" aria-live="polite">
+          {toast}
+        </div>
+      )}
 
       {bootstrap?.isPreview && (
         <div className="preview-banner">
@@ -294,7 +323,7 @@ export default function App() {
       )}
 
       {/* Top Bar */}
-      <header className="top-bar">
+      <header className={`top-bar${scrolled ? ' scrolled' : ''}`}>
         <div className="top-brand">
           <span className="top-brand-dot" />
           <span className="top-title">{bootstrap?.config?.profile?.displayName || 'RosePanel'}</span>
@@ -394,7 +423,11 @@ export default function App() {
 
       {/* Floating Glass Pill Bottom Dock */}
       <nav className="bottom-dock-wrap" aria-label="主导航">
-        <div className="bottom-dock">
+        <div
+          className="bottom-dock"
+          style={{ '--dock-count': navItems.length, '--dock-index': activeNavIndex }}
+        >
+          <span className="dock-indicator" aria-hidden="true" />
           {navItems.map((item) => {
             const Icon = item.icon;
             const active = activeTab === item.id;
@@ -403,6 +436,7 @@ export default function App() {
                 key={item.id}
                 type="button"
                 className={`dock-item ${active ? 'active' : ''}`}
+                aria-current={active ? 'page' : undefined}
                 onClick={() => {
                   haptic('light');
                   setActiveTab(item.id);

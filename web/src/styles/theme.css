@@ -196,11 +196,30 @@ select {
 
 /* Top Header */
 .top-bar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
-  padding: 2px 2px;
+  margin: 0 -14px 12px;
+  padding: calc(8px + env(safe-area-inset-top, 0px)) 16px 8px;
+  background: transparent;
+  border-bottom: 1px solid transparent;
+  border-radius: 0 0 18px 18px;
+  transition: background 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+}
+
+.top-bar.scrolled {
+  background: var(--glass-bg-strong);
+  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  border-bottom-color: var(--glass-border);
+  box-shadow: var(--glass-highlight), 0 6px 24px rgba(102, 27, 53, 0.08);
+}
+
+[data-theme='dark'] .top-bar.scrolled {
+  box-shadow: var(--glass-highlight), 0 8px 28px rgba(0, 0, 0, 0.36);
 }
 
 .top-brand {
@@ -210,11 +229,30 @@ select {
 }
 
 .top-brand-dot {
-  width: 9px;
-  height: 9px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 0 0 4px var(--accent-soft);
+  flex-shrink: 0;
+  background: radial-gradient(
+    circle at 32% 32%,
+    var(--aurora-2) 0%,
+    var(--accent) 58%,
+    var(--accent-strong) 100%
+  );
+  box-shadow: 0 0 0 3px var(--accent-soft), 0 0 12px var(--aurora-1);
+  animation: brandOrbPulse 3.2s ease-in-out infinite;
+}
+
+@keyframes brandOrbPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 3px var(--accent-soft), 0 0 10px var(--aurora-1);
+  }
+  50% {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 5px var(--accent-soft), 0 0 16px var(--aurora-1);
+  }
 }
 
 .top-title {
@@ -259,6 +297,16 @@ select {
   color: var(--accent);
   border-color: var(--accent-line);
   box-shadow: var(--glass-highlight), 0 3px 12px rgba(163, 41, 82, 0.12);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .top-bar {
+    transition: none;
+  }
+
+  .top-brand-dot {
+    animation: none;
+  }
 }
 
 /* Cards */
@@ -1016,24 +1064,48 @@ select {
 }
 
 .bottom-dock {
+  position: relative;
+  --dock-pad: 6px;
+  --dock-gap: 4px;
   pointer-events: auto;
   width: 100%;
   max-width: 460px;
-  background: var(--dock-bg);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: var(--glass-bg-strong);
+  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
   border-radius: 999px;
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-dock);
-  padding: 6px;
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-highlight), var(--shadow-dock);
+  padding: var(--dock-pad);
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: 1fr;
-  gap: 4px;
+  gap: var(--dock-gap);
+}
+
+.dock-indicator {
+  position: absolute;
+  top: var(--dock-pad);
+  bottom: var(--dock-pad);
+  left: var(--dock-pad);
+  width: calc(
+    (100% - var(--dock-pad) * 2 - var(--dock-gap) * (var(--dock-count, 3) - 1)) /
+      var(--dock-count, 3)
+  );
+  border-radius: 999px;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-line);
+  box-shadow: var(--glass-highlight);
+  transform: translateX(calc(var(--dock-index, 0) * (100% + var(--dock-gap))));
+  transition: transform 0.34s cubic-bezier(0.34, 1.4, 0.64, 1);
+  pointer-events: none;
+  z-index: 0;
+  will-change: transform;
 }
 
 .dock-item {
   position: relative;
+  z-index: 1;
   border: none;
   background: transparent;
   border-radius: 999px;
@@ -1047,7 +1119,11 @@ select {
   font-size: 11px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.18s ease, color 0.18s ease, transform 0.12s ease;
+  transition: color 0.18s ease, transform 0.12s ease;
+}
+
+.dock-item svg {
+  transition: transform 0.24s cubic-bezier(0.34, 1.4, 0.64, 1);
 }
 
 .dock-item:active {
@@ -1055,8 +1131,11 @@ select {
 }
 
 .dock-item.active {
-  background: var(--accent-soft);
   color: var(--accent);
+}
+
+.dock-item.active svg {
+  transform: translateY(-2px);
 }
 
 .dock-badge {
@@ -1074,6 +1153,14 @@ select {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dock-indicator,
+  .dock-item,
+  .dock-item svg {
+    transition: none;
+  }
 }
 
 /* Bottom Sheet / Modal */
@@ -1206,20 +1293,40 @@ select.input:focus {
 /* Toast */
 .toast {
   position: fixed;
-  top: 16px;
+  top: calc(16px + env(safe-area-inset-top, 0px));
   left: 50%;
   transform: translateX(-50%);
   z-index: 90;
-  background: rgba(30, 22, 25, 0.92);
-  color: #fff;
+  background: var(--glass-bg-strong);
+  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  color: var(--text);
+  border: 1px solid var(--glass-border);
   padding: 10px 18px;
   border-radius: 999px;
   font-size: 13px;
   font-weight: 600;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+  box-shadow: var(--glass-highlight), var(--shadow-dock);
   max-width: 88vw;
   text-align: center;
-  animation: fadeIn 0.16s ease;
+  animation: toastSlideIn 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -12px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    animation: none;
+  }
 }
 
 /* Dev preview bar */
@@ -1231,10 +1338,28 @@ select.input:focus {
   padding: 8px 12px;
   margin-bottom: 10px;
   border-radius: 14px;
-  background: var(--amber-soft);
+  background: linear-gradient(135deg, rgba(255, 246, 232, 0.84), rgba(254, 236, 206, 0.74));
+  border: 1px solid rgba(184, 108, 14, 0.24);
+  box-shadow: var(--glass-highlight), 0 4px 14px rgba(184, 108, 14, 0.08);
   color: var(--amber);
   font-size: 12px;
   font-weight: 600;
+}
+
+[data-theme='dark'] .preview-banner {
+  background: linear-gradient(135deg, rgba(58, 41, 22, 0.82), rgba(46, 32, 18, 0.74));
+  border-color: rgba(242, 174, 75, 0.28);
+  box-shadow: var(--glass-highlight), 0 6px 18px rgba(0, 0, 0, 0.32);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .preview-banner {
+    background: #fdf4e6;
+  }
+
+  [data-theme='dark'] .preview-banner {
+    background: #2e2115;
+  }
 }
 
 /* Home Etiquette & Owner Overview Cards */
