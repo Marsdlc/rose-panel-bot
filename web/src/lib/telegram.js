@@ -5,9 +5,12 @@ export function getTelegramWebApp() {
 }
 
 export function syncTelegramChrome(theme = 'light') {
+  const bg = theme === 'dark' ? '#120e12' : '#f8f2f5';
+  if (typeof document !== 'undefined') {
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', bg);
+  }
   const tg = getTelegramWebApp();
   if (!tg) return;
-  const bg = theme === 'dark' ? '#141012' : '#faf4f5';
   try {
     tg.setHeaderColor?.(bg);
     tg.setBackgroundColor?.(bg);

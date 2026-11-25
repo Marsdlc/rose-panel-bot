@@ -5,6 +5,7 @@ import './styles/theme.css';
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
+    <div className="aurora-bg" aria-hidden="true" />
     <App />
   </React.StrictMode>
 );
