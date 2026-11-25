@@ -83,7 +83,8 @@ export default function TicketTab({
 
     return (
       <>
-        <div className="ticket-card">
+        <div className="ticket-card-wrap">
+          <div className="ticket-card">
           <div className="ticket-left">
             <div>
               <div className="ticket-user-row">
@@ -188,6 +189,7 @@ export default function TicketTab({
               <br />
               徽章 {checkin.unlockedBadgeCount}/{checkin.totalBadgeCount}
             </div>
+          </div>
           </div>
         </div>
 
@@ -345,7 +347,8 @@ export default function TicketTab({
   // --- Mode A: Clean Personal Card Ticket Stub (Default for @Rose202_bot) ---
   return (
     <>
-      <div className="ticket-card">
+      <div className="ticket-card-wrap">
+        <div className="ticket-card">
         <div className="ticket-left">
           <div>
             <div className="ticket-user-row">
@@ -392,6 +395,7 @@ export default function TicketTab({
           <TicketEmblem emblem={profile.emblem} size={64} />
           <div className="stub-rank">{profile.badgeTitle || '站长'}</div>
           <div className="stub-sub">{profile.joinedText || 'RosePanel'}</div>
+        </div>
         </div>
       </div>
 

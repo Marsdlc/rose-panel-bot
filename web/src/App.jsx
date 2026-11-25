@@ -294,10 +294,8 @@ export default function App() {
     navItems.push({ id: 'leaderboard', label: '榜单', icon: Trophy });
   }
 
-  const activeNavIndex = Math.max(
-    0,
-    navItems.findIndex((item) => item.id === activeTab)
-  );
+  const activeNavIndex = navItems.findIndex((item) => item.id === activeTab);
+  const hasActiveNav = activeNavIndex >= 0;
 
   return (
     <div className="app-shell">
@@ -422,8 +420,8 @@ export default function App() {
       {/* Floating Glass Pill Bottom Dock */}
       <nav className="bottom-dock-wrap" aria-label="主导航">
         <div
-          className="bottom-dock"
-          style={{ '--dock-count': navItems.length, '--dock-index': activeNavIndex }}
+          className={`bottom-dock${hasActiveNav ? '' : ' no-active'}`}
+          style={{ '--dock-count': navItems.length, '--dock-index': hasActiveNav ? activeNavIndex : 0 }}
         >
           <span className="dock-indicator" aria-hidden="true" />
           {navItems.map((item) => {

@@ -23,12 +23,12 @@ export function renderTurnstileVerifyPage(siteKey, verifyId) {
       align-items: center;
       justify-content: center;
       padding: 20px;
-      background: #faf4f5;
+      background: #f8f2f5;
       color: #1e1619;
       font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'PingFang SC', sans-serif;
     }
     @media (prefers-color-scheme: dark) {
-      body { background: #141012; color: #f7eef1; }
+      body { background: #120e12; color: #f7eef1; }
       .card { background: #1f181b !important; border-color: rgba(255,224,235,0.08) !important; }
       .sub { color: #b9a6ae !important; }
     }
