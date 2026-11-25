@@ -79,39 +79,37 @@ function SplashScreen({ splash }) {
 
   if (style === 'skeleton') {
     return (
-      <div className="app-shell">
-        <div className="top-bar" style={{ marginBottom: 14 }}>
-          <div className="skeleton-pill" style={{ width: 120, height: 22 }} />
-          <div style={{ display: 'flex', gap: 8 }}>
-            <div className="skeleton-circle" style={{ width: 34, height: 34 }} />
+      <div className="app-shell skeleton-shell">
+        <div className="top-bar skeleton-top">
+          <div className="skeleton-pill skeleton-brand-pill" />
+          <div className="skeleton-actions">
+            <div className="skeleton-circle skeleton-action-dot" />
           </div>
         </div>
-        <div className="card skeleton-card" style={{ height: 196, padding: 18 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <div className="skeleton-circle" style={{ width: 46, height: 46 }} />
-            <div style={{ flex: 1 }}>
-              <div className="skeleton-line" style={{ width: '52%', height: 16 }} />
-              <div className="skeleton-line" style={{ width: '34%', height: 11, marginTop: 8 }} />
+        <div className="card skeleton-card skeleton-card-profile">
+          <div className="skeleton-profile-row">
+            <div className="skeleton-circle skeleton-avatar" />
+            <div className="skeleton-profile-meta">
+              <div className="skeleton-line skeleton-name-line" />
+              <div className="skeleton-line skeleton-handle-line" />
             </div>
           </div>
-          <div className="skeleton-pill" style={{ width: 92, height: 22, marginTop: 16 }} />
-          <div className="skeleton-line" style={{ width: '88%', height: 12, marginTop: 14 }} />
-          <div className="skeleton-line" style={{ width: '64%', height: 12, marginTop: 8 }} />
+          <div className="skeleton-pill skeleton-badge-pill" />
+          <div className="skeleton-line skeleton-bio-line" />
+          <div className="skeleton-line skeleton-bio-line-short" />
         </div>
-        <div className="card skeleton-card" style={{ padding: 16 }}>
-          <div className="skeleton-line" style={{ width: '32%', height: 13, marginBottom: 14 }} />
-          <div className="skeleton-line" style={{ width: '78%', height: 14, marginBottom: 12 }} />
-          <div className="skeleton-line" style={{ width: '68%', height: 14 }} />
+        <div className="card skeleton-card skeleton-card-list">
+          <div className="skeleton-line skeleton-section-title" />
+          <div className="skeleton-line skeleton-list-row" />
+          <div className="skeleton-line skeleton-list-row-short" />
         </div>
-        <div className="splash-caption" style={{ textAlign: 'center', marginTop: 8 }}>
-          {text}
-        </div>
+        <div className="splash-caption skeleton-caption">{text}</div>
       </div>
     );
   }
 
   return (
-    <div className="app-shell splash-shell">
+    <div className="splash-shell">
       <div className="splash-stage">
         <div className="splash-halo">
           <div className="splash-core">
@@ -128,10 +126,8 @@ function SplashScreen({ splash }) {
         <div className="splash-brand">{displayName}</div>
         <div className="splash-caption">{text}</div>
 
-        <div className="splash-dots" aria-hidden="true">
-          <span />
-          <span />
-          <span />
+        <div className="splash-progress" aria-hidden="true">
+          <span className="splash-progress-bar" />
         </div>
       </div>
     </div>
@@ -235,12 +231,14 @@ export default function App() {
 
   if (error && !bootstrap) {
     return (
-      <div className="app-shell">
-        <div className="card empty-state">
-          <div style={{ fontSize: 28, marginBottom: 8 }}>🥀</div>
-          <div style={{ fontWeight: 700, color: 'var(--text)' }}>无法连接到面板服务</div>
-          <div style={{ marginTop: 6 }}>{error}</div>
-          <button className="btn btn-primary btn-sm" style={{ marginTop: 14 }} onClick={loadBootstrap}>
+      <div className="app-shell error-shell">
+        <div className="card error-card">
+          <div className="error-emblem" aria-hidden="true">
+            🥀
+          </div>
+          <div className="error-title">无法连接到面板服务</div>
+          <div className="error-message">{error}</div>
+          <button type="button" className="btn btn-primary btn-sm error-retry" onClick={loadBootstrap}>
             重试
           </button>
         </div>
